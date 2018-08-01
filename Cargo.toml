@@ -1,5 +1,11 @@
 [package]
-name = "dependant-view"
+name = "dependent_view"
+description="Wrappers to produce weak trait objects from reference types"
+categories=["utility","trait-object"]
+keywords=["weak","rc","trait","trait-object"]
+readme="README.md"
+repository="https://github.com/gopiandcode/dependent-view"
+license="MIT"
 version = "1.0.0"
 authors = ["Gopiandcode (https://github.com/gopiandcode)"]
 

@@ -2,7 +2,8 @@
 
 use super::push_ref;
 
-use std::rc::{Rc, Weak};
+use std::rc::Rc;
+use std::convert::{AsMut,AsRef};
 use std::any::Any;
 use std::mem::transmute;
 use std::ops::{Deref, DerefMut};
