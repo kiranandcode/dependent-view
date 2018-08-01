@@ -15,6 +15,3 @@ authors = ["Gopiandcode (https://github.com/gopiandcode)"]
 name="dependent_view"
 path="src/lib.rs"
 
-[[bin]]
-name="dependent_view_example"
-path="src/main.rs"

@@ -49,8 +49,7 @@ pub fn main() {
 
 
     // owning thread
-    thread::spawn(move|| {
-        loop {
+    let h1 = thread::spawn(move|| {
             let mut count = dancers.len() + prancers.len();
             let mut seed = 13;
 
@@ -72,27 +71,38 @@ pub fn main() {
 
             println!("\nRemaining items {:?}", count);
             thread::sleep(time::Duration::from_millis(1000));
-        }
     });
 
-    loop {
-        let mut count = 0;
-        for (dancer_ref, prancer_ref) in dance_refs.iter().zip(prance_refs.iter()) {
-            if let Some(dref) = dancer_ref.upgrade() {
-                dref.dance(); 
-                count += 1;
-            }
-            if let Some(pref) = prancer_ref.upgrade() {
-                pref.prance();
-                count += 1;
-            }
-            
-        }
-        if count == 0 { break; }
-        println!("\nRemaining references {:?}", count);
-        thread::sleep(time::Duration::from_millis(1000));
-    }
 
+
+    let h2 = thread::spawn(move || {
+
+        loop {
+            let mut count = 0;
+
+            for (dancer_ref, prancer_ref) in dance_refs.iter().zip(prance_refs.iter()) {
+                if let Some(dref) = dancer_ref.upgrade() {
+                    dref.dance(); 
+                    count += 1;
+                }
+                if let Some(pref) = prancer_ref.upgrade() {
+                    pref.prance();
+                    count += 1;
+                }
+
+            }
+            if count == 0 { break; }
+            println!("\nRemaining references {:?}", count);
+            thread::sleep(time::Duration::from_millis(1000));
+            let dref = dance_refs.remove(0);
+            thread::spawn(move || (dref.upgrade().unwrap().dance()));
+        }
+
+    });
+
+
+    h1.join();
+    h2.join();
 
 
 }
