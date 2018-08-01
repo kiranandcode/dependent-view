@@ -1,3 +1,16 @@
-mod rc;
+#![allow(dead_code)]
 
-pub use rc::*;
+#[macro_use]
+pub mod rc;
+#[macro_use]
+pub mod arc;
+
+
+pub trait DependableView<T> {
+    fn into_view(&mut self) -> T;
+}
+
+pub fn push_ref<T>(items: &mut Vec<T>, value: T) -> &T {
+    items.push(value);
+    &items[items.len() - 1]
+}

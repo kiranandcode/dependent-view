@@ -1,6 +1,6 @@
-#![allow(dead_code)]
-use std::rc::{Rc};
-use std::rc;
+use super::DependableView;
+
+use std::rc::{Rc, Weak};
 use std::any::Any;
 use std::mem::transmute;
 use std::ops::{Deref, DerefMut};
@@ -8,14 +8,14 @@ use std::ops::{Deref, DerefMut};
 #[macro_export]
 macro_rules! dependable_register_trait {
     ($type: tt) => {
-        impl<T : $type> Dependable<rc::Weak<$type>> for DependentRc<T> {
-            fn retrieve_dependancy(&mut self) -> rc::Weak<$type> {
-                let reference : Rc<$type> = self.item.clone();
-                let reference : Rc<Any> = unsafe { transmute(reference) } ; 
-                let reference : &Rc<Any> = push_ref(&mut self.dependants, reference);
-                let reference : &Rc<$type> = unsafe { transmute(reference) };
+        impl<T : $type> dependent_view::DependableView<::std::rc::Weak<$type>> for dependent_view::rc::DependentRc<T> {
+            fn into_view(&mut self) -> ::std::rc::Weak<$type> {
+                let reference : ::std::rc::Rc<$type> = self.item.clone();
+                let reference : ::std::rc::Rc<::std::any::Any> = unsafe { ::std::mem::transmute(reference) } ; 
+                let reference : &::std::rc::Rc<::std::any::Any> = dependent_view::push_ref(&mut self.dependants, reference);
+                let reference : &::std::rc::Rc<$type> = unsafe { ::std::mem::transmute(reference) };
 
-                Rc::downgrade(reference)
+                ::std::rc::Rc::downgrade(reference)
             }
         }
     };
@@ -26,13 +26,10 @@ macro_rules! dependable_register_trait {
     };
 }
 
-fn push_ref<T>(items: &mut Vec<T>, value: T) -> &T {
-    items.push(value);
-    &items[items.len() - 1]
-}
 
 
-struct DependentRc<T> {
+
+pub struct DependentRc<T> {
     item: Rc<T>,
     dependants: Vec<Rc<Any>>
 }
@@ -40,7 +37,7 @@ struct DependentRc<T> {
 
 
 impl<T> DependentRc<T> {
-    fn new(item: T) -> DependentRc<T> {
+    pub fn new(item: T) -> DependentRc<T> {
         DependentRc {
             item: Rc::new(item),
             dependants: Vec::new()
@@ -56,43 +53,8 @@ impl<T> Deref for DependentRc<T> {
     }
 }
 impl<T> DerefMut for DependentRc<T> {
-
     fn deref_mut(&mut self) -> &mut Rc<T> {
         &mut self.item
     }
 }
-
-trait Dependable<T> {
-    fn retrieve_dependancy(&mut self) -> T;
-}
-
-dependable_register_trait!(Prance, Dance);
-
-
-
-
-trait Dance {
-    fn dance(&self);
-}
-
-trait Prance {
-    fn prance(&self);
-}
-
-struct Dancer {
-    id: usize
-}
-
-impl Dance for Dancer {
-    fn dance(&self) {
-        println!("Dancing {:?}", self.id);
-    }
-}
-
-impl Prance for Dancer {
-    fn prance(&self)  {
-        println!("Prancing {:?}", self.id + 1);
-    }
-}
-
 
