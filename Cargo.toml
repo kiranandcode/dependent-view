@@ -1,7 +1,7 @@
 [package]
 name = "dependent_view"
 description="Wrappers to produce weak trait objects from reference types"
-categories=["Memory management","Rust patterns"]
+categories=["memory-management","rust-patterns"]
 keywords=["weak","rc","trait","trait-object"]
 readme="README.md"
 repository="https://github.com/gopiandcode/dependent-view"
