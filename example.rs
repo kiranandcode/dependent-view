@@ -1,5 +1,4 @@
-#[macro_use]
-extern crate dependent_view;
+#[macro_use] extern crate dependent_view;
 
 use dependent_view::rc::DependentRc;
 use std::rc::{Rc, Weak};
