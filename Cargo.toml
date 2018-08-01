@@ -5,6 +5,10 @@ authors = ["Gopiandcode (https://github.com/gopiandcode)"]
 
 [dependencies]
 
-[[bin]]
-name="example"
+[lib]
+name="dependent_view"
 path="src/lib.rs"
+
+[[bin]]
+name="dependent_view_example"
+path="src/main.rs"

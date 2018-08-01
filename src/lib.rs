@@ -1,7 +1,13 @@
-mod rc;
+#![allow(dead_code)]
 
-pub use rc::*;
 
-pub fn main() {
-    run();
+#[macro_use]
+pub mod rc;
+#[macro_use]
+pub mod arc;
+
+
+fn push_ref<T>(items: &mut Vec<T>, value: T) -> &T {
+    items.push(value);
+    &items[items.len() - 1]
 }
