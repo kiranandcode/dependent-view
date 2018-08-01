@@ -4,3 +4,7 @@ version = "1.0.0"
 authors = ["Gopiandcode (https://github.com/gopiandcode)"]
 
 [dependencies]
+
+[[bin]]
+name="example"
+path="src/lib.rs"

@@ -1,30 +1,9 @@
 #![allow(dead_code)]
-use std::rc::{Rc};
-use std::rc;
+use std::rc::{Rc, Weak};
 use std::any::Any;
 use std::mem::transmute;
 use std::ops::{Deref, DerefMut};
 
-#[macro_export]
-macro_rules! dependable_register_trait {
-    ($type: tt) => {
-        impl<T : $type> Dependable<rc::Weak<$type>> for DependentRc<T> {
-            fn retrieve_dependancy(&mut self) -> rc::Weak<$type> {
-                let reference : Rc<$type> = self.item.clone();
-                let reference : Rc<Any> = unsafe { transmute(reference) } ; 
-                let reference : &Rc<Any> = push_ref(&mut self.dependants, reference);
-                let reference : &Rc<$type> = unsafe { transmute(reference) };
-
-                Rc::downgrade(reference)
-            }
-        }
-    };
-    ($type: tt, $($rest: tt),+) => {
-        dependable_register_trait!($type);
-
-        dependable_register_trait!($($rest),*);
-    };
-}
 
 fn push_ref<T>(items: &mut Vec<T>, value: T) -> &T {
     items.push(value);
@@ -40,13 +19,33 @@ struct DependentRc<T> {
 
 
 impl<T> DependentRc<T> {
-    fn new(item: T) -> DependentRc<T> {
+    pub fn new(item: T) -> DependentRc<T> {
         DependentRc {
             item: Rc::new(item),
             dependants: Vec::new()
         }
     }
+
+    pub fn into_view_internal<X,Y,G,F, H>(&mut self, conversion: F, downgrade: G, to_any: H) -> Y
+    where F : FnOnce(&Rc<T>) -> X,
+          G : FnOnce(&X) -> Y,
+          H : FnOnce(X) -> Rc<Any>
+    {
+        let reference : X = conversion(&self.item);
+        let reference : Rc<Any> = to_any(reference);
+        let reference : &Rc<Any> = push_ref(&mut self.dependants, reference);
+        let reference : &X = unsafe { transmute(reference) };
+        downgrade(reference)
+    }
 }
+
+#[macro_export]
+macro_rules! to_view {
+    ($dep:tt) => {
+        ($dep.into_view_internal::<_, _,_, _, _>(|item| item.clone() as Rc<_>, |item| Rc::downgrade(item), |item| unsafe { transmute(item) }));
+    }
+}
+
 
 impl<T> Deref for DependentRc<T> {
     type Target = Rc<T>;
@@ -61,12 +60,6 @@ impl<T> DerefMut for DependentRc<T> {
         &mut self.item
     }
 }
-
-trait Dependable<T> {
-    fn retrieve_dependancy(&mut self) -> T;
-}
-
-dependable_register_trait!(Prance, Dance);
 
 
 
@@ -95,4 +88,46 @@ impl Prance for Dancer {
     }
 }
 
+pub fn run() {
+    let mut dancers : Vec<Weak<Dance>> = Vec::new();
+    let mut prancers : Vec<Weak<Prance>> = Vec::new();
 
+    {
+        let mut reference = DependentRc::new(Dancer { id: 0 });
+
+        dancers.push(to_view!(reference));
+        prancers.push(to_view!(reference));
+
+        for refr in dancers.iter() {
+            if let Some(refr) = refr.upgrade() {
+                refr.dance();
+            }
+        }
+        for refr in prancers.iter() {
+            if let Some(refr) = refr.upgrade() {
+                refr.prance();
+            }
+        }
+
+    }
+
+
+    for refr in dancers.iter() {
+        if let Some(refr) = refr.upgrade() {
+            refr.dance();
+        } else {
+            println!("Reference dropped");
+        }
+    }
+    for refr in prancers.iter() {
+        if let Some(refr) = refr.upgrade() {
+            refr.prance();
+        } else {
+            println!("Reference dropped");
+        }
+    }
+
+
+    println!("Hello world");
+
+}
