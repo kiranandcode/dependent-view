@@ -1,0 +1,6 @@
+[package]
+name = "dependant-view"
+version = "1.0.0"
+authors = ["Gopiandcode (https://github.com/gopiandcode)"]
+
+[dependencies]
