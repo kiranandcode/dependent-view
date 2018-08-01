@@ -5,7 +5,7 @@ dependent_view is a rust library providing simple wrappers around the `Rc` and `
 Add this to your `Cargo.toml`
 ```
 [dependencies]
-dependent_view="1.0.0"
+dependent_view="1.0.1"
 ```
 and this to your crate root:
 ```
@@ -13,7 +13,10 @@ and this to your crate root:
 extern crate dependent_view;
 ```
 
-The library provides two main structs `DependentRc` and `DependentArc` which changes the result of the view type (between `std::rc::Weak` or `std::sync::Weak`).
+
+The library provides two main structs `DependentRc` and `DependentArc` for normal and thread-safe views.
+
+These change the result of the view type (between `std::rc::Weak` or `std::sync::Weak`).
 
 To obtain a `Weak<Trait>` from these objects, use the macros `to_view!()` or `to_view_sync()` respectively.
 

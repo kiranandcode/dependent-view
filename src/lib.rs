@@ -6,7 +6,7 @@
 //! Add this to your `Cargo.toml`
 //! ```ignore,text
 //! [dependencies]
-//! dependent_view="1.0.0"
+//! dependent_view="1.0.1"
 //! ```
 //! and this to your crate root:
 //! ```ignore
@@ -15,6 +15,7 @@
 //! ```
 //! 
 //! The library provides two main structs `DependentRc` and `DependentArc` for normal and thread-safe views.
+//!
 //! These change the result of the view type (between `std::rc::Weak` or `std::sync::Weak`).
 //! 
 //! To obtain a `Weak<Trait>` from a dependent struct, use the macros `to_view!()` or `to_view_sync()` respectively.

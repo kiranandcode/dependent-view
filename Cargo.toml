@@ -6,7 +6,7 @@ keywords=["weak","rc","trait","trait-object"]
 readme="README.md"
 repository="https://github.com/gopiandcode/dependent-view"
 license="MIT"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["Gopiandcode (https://github.com/gopiandcode)"]
 
 [dependencies]
