@@ -7,7 +7,7 @@ dependent_view is a rust library providing simple wrappers around the `Rc` and `
 Add this to your `Cargo.toml`
 ```
 [dependencies]
-dependent_view="1.0.1"
+dependent_view="1"
 ```
 and this to your crate root:
 ```
@@ -103,4 +103,7 @@ let bad = DependentRc::new(Bad { id: 0 });
 let bad_view : Weak<Dance> = to_view!(bad); // compile time error
 ```
 See `example.rs` for the full source.
+
+
+Due to the way the internals work, if the compiler can not infer the type of the result of `to_view!`, it complains about `std::mem::transmute` being called on types of different sizes. This usually only happens if you don't actually use the view - and can often be avoided by simply adding type annotations.
 

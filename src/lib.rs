@@ -6,7 +6,7 @@
 //! Add this to your `Cargo.toml`
 //! ```ignore,text
 //! [dependencies]
-//! dependent_view="1.0.1"
+//! dependent_view="1"
 //! ```
 //! and this to your crate root:
 //! ```ignore
@@ -153,6 +153,10 @@
 //! let bad_view : Weak<Dance> = to_view!(bad); // compile time error
 //! ```
 //! See [`example.rs`](https://github.com/Gopiandcode/dependent-view/blob/master/example.rs) for the full source.
+//!
+//! Due to the way the internals work, if the compiler can not infer the type of the result of `to_view!`,
+//! it complains about `std::mem::transmute` being called on types of different sizes. This usually only
+//! happens if you don't actually use the view - and can often be avoided by simply adding type annotations.
 
 
 #[macro_use]
