@@ -1,4 +1,6 @@
-# dependent_view
+# dependent_view [![Build status](https://ci.appveyor.com/api/projects/status/e7l5c4xm4r0e8nc4?svg=true)](https://ci.appveyor.com/project/Gopiandcode/dependent-view)
+
+
 dependent_view is a rust library providing simple wrappers around the `Rc` and `Arc` types, imbuing them with the capability to provide "views" of non-owned structs to separate components of a system. 
 
 ## Usage
